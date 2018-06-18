@@ -95,6 +95,9 @@ inline bool hw_check_aes()
 }
 #endif
 
+alignas(16) extern const uint32_t saes_table[4][256];
+alignas(16) extern const uint8_t  saes_sbox[256];
+
 // This cruft avoids casting-galore and allows us not to worry about sizeof(void*)
 class cn_sptr
 {
@@ -238,10 +241,12 @@ private:
 };
 
 using cn_pow_hash_v1 = cn_slow_hash<2*1024*1024, 0x80000, 0>;
-using cn_pow_hash_v2 = cn_slow_hash<4*1024*1024, 0x40000, 1>;
+using cn_pow_hash_v2 = cn_slow_hash<1*1024*1024, 0x40000, 1>;
+using cn_pow_hash_v3 = cn_slow_hash<4*1024*1024, 0x40000, 2>;
 
 extern template class cn_slow_hash<2*1024*1024, 0x80000, 0>;
-extern template class cn_slow_hash<4*1024*1024, 0x40000, 1>;
+extern template class cn_slow_hash<1*1024*1024, 0x40000, 1>;
+extern template class cn_slow_hash<4*1024*1024, 0x40000, 2>;
 
 } //cn_heavy namespace
 
