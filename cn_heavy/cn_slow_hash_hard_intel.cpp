@@ -403,7 +403,7 @@ void cn_slow_hash<MEMORY,ITER,VERSION>::hardware_hash(const void* in, size_t len
 		}
 
 
-		if (VERSION >= 1) {
+		if (VERSION >= 1) { // by design, use both tweaked aes and monero tweak for >= v2
 			cryptonight_monero_tweak(scratchpad_ptr(idx0).as_uqword(), _mm_xor_si128(bx0, cx));
 		} else {
 			_mm_store_si128(scratchpad_ptr(idx0).as_xmm(), _mm_xor_si128(bx0, cx));
