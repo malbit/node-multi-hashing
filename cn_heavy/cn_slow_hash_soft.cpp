@@ -123,9 +123,11 @@ struct aesdata
 			uint64_t v64x0;
 			uint64_t v64x1;
 		};
+		/*
 		struct {
 			__uint128_t v128x0;
 		};
+		*/
 	};
 
 	inline void load(const cn_sptr mem)
@@ -283,8 +285,10 @@ inline void aes_round_tweak_div(aesdata& val, const aesdata& key)
 	k3 ^= saes_table[0][BYTE(x3, 0)] ^ saes_table[1][BYTE(x0, 1)] ^ saes_table[2][BYTE(x1, 2)] ^ saes_table[3][BYTE(x2, 3)];
 	#undef BYTE
 	val.set_quad(k0, k1, k2, k3);
+	/*
 	val.v128x0 ^= (val.v128x0 / val.v64x0) ^ (val.v128x0 % val.v64x1);
 	val.v64x1 ^= (val.v128x0 % val.v64x0) ^ (val.v128x0 % val.v64x1);
+	*/
 }
 
 inline void aes_round8(const aesdata& key, aesdata& x0, aesdata& x1, aesdata& x2, aesdata& x3, aesdata& x4, aesdata& x5, aesdata& x6, aesdata& x7)
