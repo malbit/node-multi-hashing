@@ -167,8 +167,16 @@ struct aesdata
 		v64x1 ^= t;
 		return *this;
 	}
+
+	inline aesdata operator~() noexcept
+	{
+		aesdata inv;
+		inv.v64x0 = ~v64x0;
+		inv.v64x1 = ~v64x1;
+		return inv;
+	}
 	
-	inline void get_quad(uint32_t& x0, uint32_t& x1, uint32_t& x2, uint32_t& x3)
+	inline void get_quad(uint32_t& x0, uint32_t& x1, uint32_t& x2, uint32_t& x3) const
 	{
 		x0 = v64x0;
 		x1 = v64x0 >> 32;
