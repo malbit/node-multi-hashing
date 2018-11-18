@@ -124,9 +124,12 @@ NAN_METHOD(scryptn) {
    if(!Buffer::HasInstance(target))
        return THROW_ERROR_EXCEPTION("Argument should be a buffer object.");
 
-   Local<Number> num = info[1]->ToNumber();
-   unsigned int nFactor = num->Value();
-
+   //Local<Number> num = info[1]->ToNumber();
+   //unsigned int nFactor = num->Value();
+	
+   int nFactor = 0;
+   nFactor = Nan::To<int>(info[1]).FromMaybe(0);
+	
    char * input = Buffer::Data(target);
    char output[32];
 
