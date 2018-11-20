@@ -93,17 +93,18 @@ NAN_METHOD(scrypt) {
 
    if(!Buffer::HasInstance(target))
        return THROW_ERROR_EXCEPTION("Argument should be a buffer object.");
+
+
+   int nValue = Nan::To<int>(info[1]).FromMaybe(0);
     
-   Local<Number> numn = info[1]->ToNumber();
-   unsigned int nValue = numn->Value();
-   Local<Number> numr = info[2]->ToNumber();
-   unsigned int rValue = numr->Value();
-   
+
+   int rValue = Nan::To<int>(info[2]).FromMaybe(0);
+    
    char * input = Buffer::Data(target);
    char output[32];
 
    uint32_t input_len = Buffer::Length(target);
-   
+
    scrypt_N_R_1_256(input, output, nValue, rValue, input_len);
 
     v8::Local<v8::Value> returnValue = Nan::CopyBuffer(output, 32).ToLocalChecked();
@@ -124,15 +125,15 @@ NAN_METHOD(scryptn) {
    if(!Buffer::HasInstance(target))
        return THROW_ERROR_EXCEPTION("Argument should be a buffer object.");
 
-   Local<Number> num = info[1]->ToNumber();
-   unsigned int nFactor = num->Value();
-
+    
+   int nFactor = 0;
+   nFactor = Nan::To<int>(info[1]).FromMaybe(0);
+    
    char * input = Buffer::Data(target);
    char output[32];
 
    uint32_t input_len = Buffer::Length(target);
 
-   //unsigned int N = 1 << (getNfactor(input) + 1);
    unsigned int N = 1 << nFactor;
 
    scrypt_N_R_1_256(input, output, N, 1, input_len); //hardcode for now to R=1 for now
@@ -154,17 +155,17 @@ NAN_METHOD(scryptjane) {
     if(!Buffer::HasInstance(target))
         return THROW_ERROR_EXCEPTION("First should be a buffer object.");
 
-    Local<Number> num = info[1]->ToNumber();
-    int timestamp = num->Value();
 
-    Local<Number> num2 = info[2]->ToNumber();
-    int nChainStartTime = num2->Value();
+    int timestamp = Nan::To<int>(info[1]).FromMaybe(0);
 
-    Local<Number> num3 = info[3]->ToNumber();
-    int nMin = num3->Value();
 
-    Local<Number> num4 = info[4]->ToNumber();
-    int nMax = num4->Value();
+    int nChainStartTime = Nan::To<int>(info[2]).FromMaybe(0);
+    
+
+    int nMin = Nan::To<int>(info[3]).FromMaybe(0);
+    
+
+    int nMax = Nan::To<int>(info[4]).FromMaybe(0);
 
     char * input = Buffer::Data(target);
     char output[32];
@@ -524,7 +525,7 @@ NAN_METHOD(boolberry) {
 
     if(info.Length() >= 3)
         if(info[2]->IsUint32())
-            height = info[2]->ToUint32()->Uint32Value();
+            height = Nan::To<int>(info[2]).FromMaybe(0);
         else
             return THROW_ERROR_EXCEPTION("Argument 3 should be an unsigned integer.");
 
