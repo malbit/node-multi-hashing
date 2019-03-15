@@ -21,9 +21,10 @@ extern "C" {
     #include "cryptonight.h"
     #include "x13.h"
     #include "nist5.h"
-    #include "sha1.h",
+    #include "sha1.h"
     #include "x15.h"
-	#include "fresh.h"
+    #include "fresh.h"
+    #include "cryptonight_turtle_lite.h"
 }
 
 #include "boolberry.h"
@@ -646,6 +647,45 @@ NAN_METHOD(fresh) {
     );
 }
 
+NAN_METHOD(cryptonight_turtle_lite) {
+    bool fast           = false;
+    uint32_t cn_variant = 0;
+
+    if (info.Length() < 1)
+        return THROW_ERROR_EXCEPTION("You must provide one argument.");
+
+    if (info.Length() >= 2) {
+        if(info[1]->IsBoolean())
+            fast = info[1]->BooleanValue();
+        else if(info[1]->IsUint32())
+            cn_variant = info[1]->Uint32Value();
+        else
+            return THROW_ERROR_EXCEPTION("Argument 2 should be a boolean or uint32_t");
+    }
+
+    Local<Object> target = info[0]->ToObject();
+
+    if(!Buffer::HasInstance(target))
+        return THROW_ERROR_EXCEPTION("Argument should be a buffer object.");
+
+    char *input        = Buffer::Data(target);
+    uint32_t input_len = Buffer::Length(target);
+    char output[32];
+
+    if(fast)
+        cryptonightturtlelite_fast_hash(input, output, input_len);
+    else {
+        if (cn_variant > 0 && input_len < 43)
+          return THROW_ERROR_EXCEPTION("Argument must be 43 bytes for monero variant 1+");
+        cryptonightturtlelite_hash(input, output, input_len, cn_variant);
+    }
+
+    v8::Local<v8::Value> returnValue = Nan::CopyBuffer(output, 32).ToLocalChecked();
+    info.GetReturnValue().Set(
+        returnValue
+    );
+}
+
 NAN_MODULE_INIT(init) {
     Nan::Set(target, Nan::New("quark").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(quark)).ToLocalChecked());
     Nan::Set(target, Nan::New("x11").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(x11)).ToLocalChecked());
@@ -670,6 +710,7 @@ NAN_MODULE_INIT(init) {
     Nan::Set(target, Nan::New("sha1").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(sha1)).ToLocalChecked());
     Nan::Set(target, Nan::New("x15").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(x15)).ToLocalChecked());
     Nan::Set(target, Nan::New("fresh").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(fresh)).ToLocalChecked());
+    Nan::Set(target, Nan::New("cryptonight_turtle_lite").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(cryptonight_turtle_lite)).ToLocalChecked());
 }
 
 NODE_MODULE(multihashing, init)
