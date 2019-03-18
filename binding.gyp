@@ -52,6 +52,7 @@
                 "crypto/wild_keccak.cpp",
                 "cn_heavy/cn_slow_hash_hard_intel.cpp",
                 "cn_heavy/cn_slow_hash_soft.cpp",
+                "cryptonight_turtle_lite.c",
             ],
             "include_dirs": [
                 "crypto",
